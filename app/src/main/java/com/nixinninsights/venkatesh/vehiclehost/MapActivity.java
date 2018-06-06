@@ -383,7 +383,7 @@ TransistionOfFragments transistionOfFragments=new TransistionOfFragments();
             sb.append("&radius=5000");
             sb.append("&types="+type);
             sb.append("&sensor=true");
-            sb.append("&key=AIzaSyBM64bAkuWB2GJ4Vfgux1Stjvsf9kBFbVo");
+            sb.append("&key=AIzaSyBIeIjGb1hCxgmwXni-ff5-w_kjcXUkuq8");
 
             // Creating a new non-ui thread task to download json data
            PlacesTask placesTask = new PlacesTask();
@@ -485,8 +485,27 @@ TransistionOfFragments transistionOfFragments=new TransistionOfFragments();
 
             // Handle the camera action
         } else if (id == R.id.nav_gallery) {
-            //PlaceforNearVehicles();
+            PlaceforNearVehicles();
         }
+        else if(id==R.id.Normal)
+        {
+            mGoogleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+        }
+        else if(id==R.id.Hybrid)
+        {
+            mGoogleMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+        }
+        else if(id==R.id.Satellite)
+        {
+            mGoogleMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
+        }
+
+        else if(id==R.id.terrain)
+        {
+            mGoogleMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
+        }
+
+
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
@@ -627,7 +646,6 @@ TransistionOfFragments transistionOfFragments=new TransistionOfFragments();
         // Adding the StringRequest object into requestQueue.
         requestQueue.add(stringRequest);
     }
-
     private void NearVehicleList() {
 
         //  progressDialog.setMessage("Please Wait, We are Inserting Your Data on Server");
@@ -1347,7 +1365,6 @@ TransistionOfFragments transistionOfFragments=new TransistionOfFragments();
         // Executed after the complete execution of doInBackground() method
         @Override
         protected void onPostExecute(List<HashMap<String,String>> list){
-
             // Clears all the existing markers
             mGoogleMap.clear();
 
@@ -1380,6 +1397,7 @@ TransistionOfFragments transistionOfFragments=new TransistionOfFragments();
                 // Setting the title for the marker.
                 //This will be displayed on taping the marker
                 markerOptions.title(name + " : " + vicinity);
+                Log.v("MAP ACTIVITY","Runnigthe data in for amoaefiieoibnkjvnfvububu");
 
                 // Placing a marker on the touched position
                 mGoogleMap.addMarker(markerOptions);

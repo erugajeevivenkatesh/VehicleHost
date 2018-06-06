@@ -18,7 +18,7 @@
                                 <PersistentState>
                                   <option name="values">
                                     <map>
-                                      <entry key="url" value="jar:file:/D:/programfiles/AndroidStudio/plugins/android/lib/android.jar!/images/material_design_icons/maps/ic_near_me_black_24dp.xml" />
+                                      <entry key="url" value="jar:file:/D:/programfiles/AndroidStudio/plugins/android/lib/android.jar!/images/material_design_icons/action/ic_account_circle_black_24dp.xml" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -28,8 +28,7 @@
                         </option>
                         <option name="values">
                           <map>
-                            <entry key="color" value="0009f8" />
-                            <entry key="outputName" value="nearme" />
+                            <entry key="outputName" value="account" />
                             <entry key="sourceFile" value="C:\Users\venkatesh" />
                           </map>
                         </option>

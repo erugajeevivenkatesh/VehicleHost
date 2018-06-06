@@ -22,12 +22,21 @@
             android:title="Tools" />
     </group>
 
-    <item android:title="Maptype">
+    <item android:title="Map Type">
         <menu>
 
             <item
                 android:id="@+id/Normal"
                 android:title="Normal" />
+            <item
+                android:id="@+id/Hybrid"
+                android:title="Hybrid" />
+            <item
+                android:id="@+id/Satellite"
+                android:title="Satilite" />
+            <item
+                android:id="@+id/terrain"
+                android:title="Terrain" />
 
 
         </menu>
