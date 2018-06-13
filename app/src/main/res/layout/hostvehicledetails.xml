@@ -1,0 +1,96 @@
+
+<android.support.v7.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    app:cardCornerRadius="10dp"
+    android:layout_margin="10dp"
+    android:id="@+id/bottom_sheet2"
+    android:visibility="gone"
+    android:clipToPadding="true"
+    android:layout_gravity="bottom"
+    android:layout_height="400dp"
+    >
+
+<android.support.v4.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="android.support.design.widget.BottomSheetBehavior">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <TextView
+            android:layout_marginTop="5dp"
+            style="@style/AppTheme.Hostdetails"
+            android:text="RouteNo"
+            />
+        <EditText
+            android:layout_width="match_parent"
+            android:id="@+id/RouteNo"
+           android:hint="ROUTE NO"
+            android:inputType="text"
+            android:layout_marginEnd="10dp"
+            android:layout_marginStart="10dp"
+            android:singleLine="true"
+            android:layout_height="wrap_content"
+            android:imeOptions="actionNext"/>
+        <TextView
+            style="@style/AppTheme.Hostdetails"
+            android:text="From Address"/>
+        <EditText
+            android:layout_width="match_parent"
+            android:id="@+id/FromPlace"
+            android:singleLine="true"
+            android:layout_marginEnd="10dp"
+            android:layout_marginStart="10dp"
+            android:layout_height="wrap_content"
+            android:imeOptions="actionNext"/>
+        <TextView
+
+          style="@style/AppTheme.Hostdetails"
+            android:text="To Address"/>
+        <EditText
+            android:layout_width="match_parent"
+            android:id="@+id/Toplace"
+            android:singleLine="true"
+            android:layout_marginEnd="10dp"
+            android:layout_marginStart="10dp"
+            android:layout_height="wrap_content"
+            android:imeOptions="actionNext"/>
+        <TextView
+
+            style="@style/AppTheme.Hostdetails"
+            android:text="Vehicle Regestration NO"/>
+        <EditText
+            android:layout_width="match_parent"
+            android:id="@+id/RegistrationNo"
+            android:layout_marginEnd="10dp"
+            android:layout_marginStart="10dp"
+            android:singleLine="true"
+            android:layout_height="wrap_content"
+            android:imeOptions="actionNext"/>
+        <TextView
+            style="@style/AppTheme.Hostdetails"
+            android:text="Driver Name"/>
+        <EditText
+            android:inputType="text"
+            android:layout_width="match_parent"
+            android:id="@+id/drivername"
+            android:singleLine="true"
+            android:layout_marginEnd="10dp"
+            android:layout_marginStart="10dp"
+            android:layout_height="wrap_content"
+            android:imeOptions="actionDone"/>
+        <Button
+            android:layout_width="wrap_content"
+            android:text="SAVE"
+            android:onClick="SaveHostdetails"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+</android.support.v4.widget.NestedScrollView>
+
+</android.support.v7.widget.CardView>

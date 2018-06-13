@@ -1,10 +1,12 @@
-package com.nixinninsights.venkatesh.vehiclehost;
+package com.nixinninsights.venkatesh.vehiclehost.UiLoginUpdatesRegister;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.transition.Slide;
 import android.view.View;
 import android.view.animation.DecelerateInterpolator;
+
+import com.nixinninsights.venkatesh.vehiclehost.R;
 
 import static android.view.Gravity.END;
 

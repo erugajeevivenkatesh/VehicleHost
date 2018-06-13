@@ -1,23 +1,13 @@
-package com.nixinninsights.venkatesh.vehiclehost;
+package com.nixinninsights.venkatesh.vehiclehost.UiLoginUpdatesRegister;
 
-import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.transition.ChangeBounds;
-import android.transition.Slide;
-import android.transition.Transition;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.view.animation.DecelerateInterpolator;
-import android.view.inputmethod.InputMethodManager;
 
-import static android.view.Gravity.LEFT;
-import static android.view.Gravity.RIGHT;
-import static android.view.Gravity.START;
+import com.nixinninsights.venkatesh.vehiclehost.MapActivity;
+import com.nixinninsights.venkatesh.vehiclehost.R;
 
 public class LogInActivity extends AppCompatActivity {
 
@@ -26,7 +16,6 @@ public class LogInActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_account);
     }
-
     public void SignIn(View view) {
         startActivity(new Intent(getApplicationContext(),MapActivity.class));
     }
@@ -36,6 +25,9 @@ public class LogInActivity extends AppCompatActivity {
         startActivity(intent, options.toBundle());
     }
     public void Forgotpassword(View view) {
+        Intent intent=new Intent(getApplicationContext(),ForgotPasswordOTP.class);
+        ActivityOptionsCompat options=ActivityOptionsCompat.makeSceneTransitionAnimation(this);
+        startActivity(intent, options.toBundle());
 
     }
 }

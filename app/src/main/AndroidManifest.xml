@@ -33,7 +33,7 @@
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
         </activity>
-        <activity android:name=".LogInActivity">
+        <activity android:name=".UiLoginUpdatesRegister.LogInActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -55,10 +55,10 @@
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
 
-        <activity android:name=".OTPPhoneActivity" />
-        <activity android:name=".RegisterUserData" />
-        <activity android:name=".ForgotPasswordOTP" />
-        <activity android:name=".UpdatePassword"></activity>
+        <activity android:name=".UiLoginUpdatesRegister.OTPPhoneActivity" />
+        <activity android:name=".UiLoginUpdatesRegister.RegisterUserData" />
+        <activity android:name=".UiLoginUpdatesRegister.ForgotPasswordOTP" />
+        <activity android:name=".UiLoginUpdatesRegister.UpdatePassword"></activity>
     </application>
 
 </manifest>

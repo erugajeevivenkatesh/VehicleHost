@@ -1,4 +1,4 @@
-package com.nixinninsights.venkatesh.vehiclehost;
+package com.nixinninsights.venkatesh.vehiclehost.UiLoginUpdatesRegister;
 
 import android.content.Intent;
 import android.support.v4.app.ActivityOptionsCompat;
@@ -8,8 +8,9 @@ import android.transition.Slide;
 import android.view.View;
 import android.view.animation.DecelerateInterpolator;
 
+import com.nixinninsights.venkatesh.vehiclehost.R;
+
 import static android.view.Gravity.END;
-import static android.view.Gravity.RIGHT;
 
 public class OTPPhoneActivity extends AppCompatActivity {
 
@@ -27,6 +28,7 @@ public class OTPPhoneActivity extends AppCompatActivity {
 
     }
     public void sendOTP(View view) {
+
 
     }
 

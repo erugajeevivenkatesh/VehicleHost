@@ -1,8 +1,10 @@
-package com.nixinninsights.venkatesh.vehiclehost;
+package com.nixinninsights.venkatesh.vehiclehost.UiLoginUpdatesRegister;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+
+import com.nixinninsights.venkatesh.vehiclehost.R;
 
 public class UpdatePassword extends AppCompatActivity {
 
@@ -11,8 +13,6 @@ public class UpdatePassword extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_update_password);
     }
-
-
 
     public void UpdatePasswords(View view) {
     }

@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:id="@+id/LogInHost"
     android:layout_height="match_parent"
-    tools:context=".LogInActivity">
+    tools:context=".UiLoginUpdatesRegister.LogInActivity">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -69,12 +69,12 @@
                             android:id="@+id/UserEmail"
                             android:layout_width="match_parent"
                             android:layout_margin="5dp"
-                            android:maxLines="1"
+                           android:singleLine="true"
                             android:layout_height="wrap_content"
-
                             android:fontFamily="@font/convergence"
                             android:hint="Email"
                             android:textAlignment="center"
+                            android:imeOptions="actionNext"
                             android:textSize="20sp" />
 
                         <TextView
@@ -84,7 +84,6 @@
                             android:text="Password"
                             android:layout_marginStart="10dp"
                             android:textColor="@color/colorPrimary" />
-
                         <EditText
                             android:drawableLeft="@drawable/password"
                             android:id="@+id/UserPhone"
@@ -93,6 +92,7 @@
                             android:inputType="textPassword"
                             android:hint="password"
                             android:layout_margin="5dp"
+                            android:singleLine="true"
                             android:fontFamily="@font/convergence"
                             android:textAlignment="center"
                             android:textSize="20sp" />
@@ -123,7 +123,7 @@
             android:layout_marginEnd="10dp"
             android:layout_marginStart="10dp"
             android:layout_gravity="start"
-            app:cardBackgroundColor="?attr/colorBackgroundFloating"
+
             app:cardCornerRadius="10dp">
 
             <TextView
@@ -150,8 +150,7 @@
                 android:layout_marginBottom="10dp"
                 android:layout_marginEnd="10dp"
                 android:layout_marginStart="10dp"
-                app:cardBackgroundColor="?attr/colorBackgroundFloating"
-                app:cardCornerRadius="10dp">
+                    app:cardCornerRadius="10dp">
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_gravity="center"
@@ -174,8 +173,7 @@
                 android:layout_marginEnd="10dp"
                 android:id="@+id/SignIn"
                 android:onClick="SignIn"
-                app:cardBackgroundColor="?attr/colorBackgroundFloating"
-                app:cardCornerRadius="10dp">
+                  app:cardCornerRadius="10dp">
 
                 <TextView
                     android:layout_width="match_parent"
