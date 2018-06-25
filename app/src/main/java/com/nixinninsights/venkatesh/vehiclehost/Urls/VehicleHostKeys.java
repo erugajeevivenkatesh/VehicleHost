@@ -1,9 +1,10 @@
 package com.nixinninsights.venkatesh.vehiclehost.Urls;
 
 public class VehicleHostKeys {
-    public static final String KEY_NAME = "RouteNo";
-    public static final String KEY_LATTITUDE = "lat2";
-    public static final String KEY_LONGITUDE="lon2";
+    public static final String KEY_NAME = "BusRouteno";
+    public static final String KEY_LATTITUDE = "Latitude";
+    public static final String KEY_LONGITUDE="Longitude";
+    public static final String KEY_HostPerson="HostPerson";
     public static final String KEY_VEHICLENO="";
     public static final String KEY_ROUTEDETAILS="";
 

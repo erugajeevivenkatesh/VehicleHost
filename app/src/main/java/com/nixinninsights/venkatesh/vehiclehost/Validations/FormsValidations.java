@@ -55,4 +55,19 @@ public class FormsValidations {
         }
         return valid;
     }
+    public boolean UserEmailpassValiedation(EditText Email,EditText Pass)
+    {
+        boolean valid =true;
+        if(TextUtils.isEmpty(Email.getText().toString()))
+        {
+            Email.setError("Please Enter Email");
+            valid=false;
+        }
+        if(TextUtils.isEmpty(Pass.getText().toString()))
+        {
+            Pass.setError("Please Enter Password");
+            valid=false;
+        }
+        return valid;
+    }
 }

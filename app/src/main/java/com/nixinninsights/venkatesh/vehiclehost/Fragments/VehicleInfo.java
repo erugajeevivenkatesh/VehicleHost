@@ -73,14 +73,11 @@ public class VehicleInfo extends Fragment {
                 {loadingbar.setVisibility(View.GONE);
                     vehicledata.setVisibility(View.VISIBLE);
                     JsonsData(response);
-                 //   Toast.makeText(getContext(), response, Toast.LENGTH_LONG).show();
+                   // Toast.makeText(getContext(), response, Toast.LENGTH_LONG).show();
                 }
-
-            }
-        }
+            }}
                 ,new Response.ErrorListener()
         {
-
             @Override
             public void onErrorResponse(VolleyError error) {
                 // progressDialog.dismiss();
@@ -92,7 +89,7 @@ public class VehicleInfo extends Fragment {
             @Override
             protected Map<String,String> getParams()
             {   Map<String,String> params=new HashMap<String, String>();
-                params.put("HOSTNAME",VehiclePerson);
+                params.put("HOST_EMAIL",VehiclePerson);
                 return params;
             }
         };
@@ -112,9 +109,6 @@ public class VehicleInfo extends Fragment {
             Drivername.setText(VehicleTrackerDetails.getString("HostPerson"));
             VehicleNo.setText(VehicleTrackerDetails.getString("VehicleNo"));
             VehiclerouteNO.setText(VehicleTrackerDetails.getString("BusRouteno"));
-
-
-
 
         }
         catch (JSONException e)

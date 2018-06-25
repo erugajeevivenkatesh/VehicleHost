@@ -41,6 +41,7 @@
                     android:layout_marginBottom="10dp"
                     android:background="@color/black">
 
+
                 </LinearLayout>
                 <android.support.v7.widget.CardView
                     android:layout_width="match_parent"
@@ -55,47 +56,43 @@
                         android:layout_height="wrap_content"
 
                         android:orientation="vertical">
-
                         <TextView
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
+                            android:id="@+id/ErrorId"
+                            android:textColor="#FF00"
+                            android:layout_margin="8dp"
+                            android:text="Please Enter Valid Email or Password"
+                            android:layout_height="wrap_content" />
 
-                            android:layout_marginStart="10dp"
-                            android:text="Email"
-                            android:textColor="@color/colorPrimary" />
-
-                        <EditText
-                            android:drawableLeft="@drawable/email"
-                            android:id="@+id/UserEmail"
-                            android:layout_width="match_parent"
-                            android:layout_margin="5dp"
-                           android:singleLine="true"
-                            android:layout_height="wrap_content"
-                            android:fontFamily="@font/convergence"
-                            android:hint="Email"
-                            android:textAlignment="center"
-                            android:imeOptions="actionNext"
-                            android:textSize="20sp" />
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="0dp"
-                            android:layout_weight="1"
-                            android:text="Password"
-                            android:layout_marginStart="10dp"
-                            android:textColor="@color/colorPrimary" />
-                        <EditText
-                            android:drawableLeft="@drawable/password"
-                            android:id="@+id/UserPhone"
+                        <android.support.design.widget.TextInputLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:inputType="textPassword"
-                            android:hint="password"
-                            android:layout_margin="5dp"
-                            android:singleLine="true"
-                            android:fontFamily="@font/convergence"
-                            android:textAlignment="center"
-                            android:textSize="20sp" />
+                            android:layout_marginTop="8dp">
+                            <EditText  android:id="@+id/UserEmail"
+                                style="@style/AppTheme.Editroutedetails"
+                                android:hint="Email"
+                                android:layout_marginStart="10dp"
+                                android:layout_marginEnd="10dp"
+                                android:drawableEnd="@drawable/email"
+                                android:imeOptions="actionDone"
+                                />
+                        </android.support.design.widget.TextInputLayout>
+
+
+                        <android.support.design.widget.TextInputLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp">
+                            <EditText  android:id="@+id/UserPass"
+                                style="@style/AppTheme.Editroutedetails"
+                                android:hint="PASSWORD"
+                                android:layout_marginStart="10dp"
+                                android:layout_marginEnd="10dp"
+                                android:drawableEnd="@drawable/password"
+                                android:imeOptions="actionDone"
+                                />
+                        </android.support.design.widget.TextInputLayout>
+
 
                     </LinearLayout>
 
@@ -113,79 +110,35 @@
 
         </android.support.v7.widget.CardView>
 
-        <android.support.v7.widget.CardView
-            android:layout_width="match_parent"
 
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:id="@+id/Forgotpassword"
-            android:onClick="Forgotpassword"
-            android:layout_marginEnd="10dp"
-            android:layout_marginStart="10dp"
-            android:layout_gravity="start"
-
-            app:cardCornerRadius="10dp">
-
-            <TextView
+            <Button
                 android:layout_width="match_parent"
+                android:onClick="Forgotpassword"
+                android:text="Forget Password"
+                style="@style/AppTheme.ButtonStyle"
                 android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:textAlignment="center"
-                android:text="Forgot Password?"
-                android:textStyle="bold"
-                android:textSize="14sp" />
-
-        </android.support.v7.widget.CardView>
+                />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
-            <android.support.v7.widget.CardView
+            <Button
                 android:layout_width="0dp"
                 android:onClick="RegisterUser"
                 android:layout_weight="2"
-                android:layout_gravity="end"
-                android:layout_height="50dp"
-                android:layout_marginBottom="10dp"
-                android:layout_marginEnd="10dp"
-                android:layout_marginStart="10dp"
-                    app:cardCornerRadius="10dp">
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_gravity="center"
-                    android:id="@+id/Signupaccount"
-                    android:textAlignment="center"
-                    android:text="New? Register"
-                    android:textStyle="bold"
-                    android:textSize="18sp"
-                    android:layout_height="wrap_content" />
-
-
-            </android.support.v7.widget.CardView>
-
-            <android.support.v7.widget.CardView
-                android:layout_width="0dp"
+               android:text="New? Register"
+                style="@style/AppTheme.ButtonStyle"
+                android:layout_height="match_parent"
+             />
+            <Button
                 android:layout_weight="1"
-                android:layout_gravity="end"
-                android:layout_height="50dp"
-                android:layout_marginBottom="10dp"
-                android:layout_marginEnd="10dp"
-                android:id="@+id/SignIn"
+                android:layout_width="0dp"
                 android:onClick="SignIn"
-                  app:cardCornerRadius="10dp">
+                android:text="SIGNIN "
+                style="@style/AppTheme.ButtonStyle"
+                android:layout_height="match_parent"/>
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="10dp"
-                    android:layout_gravity="center"
-                    android:text="SIGN IN"
-                    android:textAlignment="center"
-                    android:textStyle="bold"
-                    android:drawableEnd="@drawable/forward"
-                    android:textSize="18sp" />
-            </android.support.v7.widget.CardView>
 
         </LinearLayout>
 

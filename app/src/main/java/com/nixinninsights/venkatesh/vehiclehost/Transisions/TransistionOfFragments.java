@@ -8,6 +8,7 @@ import android.transition.Slide;
 import android.view.Gravity;
 
 import com.nixinninsights.venkatesh.vehiclehost.Fragments.AccountInfo;
+import com.nixinninsights.venkatesh.vehiclehost.Fragments.SaveVehicleDetails;
 import com.nixinninsights.venkatesh.vehiclehost.Fragments.VehicleInfo;
 import com.nixinninsights.venkatesh.vehiclehost.R;
 
@@ -43,6 +44,29 @@ public class TransistionOfFragments   {
         AccountInfo vehicle=new AccountInfo();
 
         vehicle.setArguments(bundle);
+        Slide slideTransition = new Slide(Gravity.END);
+        slideTransition.setDuration(150);
+        Slide exitleft=new Slide(Gravity.START);
+        exitleft.setDuration(150);
+        ChangeBounds changeBoundsTransition = new ChangeBounds();
+        changeBoundsTransition.setDuration(150);
+
+        vehicle.setEnterTransition(slideTransition);
+        vehicle.setAllowEnterTransitionOverlap(false);
+        vehicle.setExitTransition(exitleft);
+        vehicle.setAllowReturnTransitionOverlap(false);
+        vehicle.setSharedElementEnterTransition(changeBoundsTransition);
+        FragmentTransaction ft=fm.beginTransaction();
+        ft.replace(R.id.drawer_layout,vehicle).addToBackStack(null).commit();
+    }
+    public void Modifiyingdetails(FragmentManager fm)
+    {
+       // Bundle bundle=new Bundle();
+        //passing Host person name for searching the database i
+       // bundle.putString("AccountInformation",Hostname);
+        SaveVehicleDetails vehicle=new SaveVehicleDetails();
+
+        //vehicle.setArguments(bundle);
         Slide slideTransition = new Slide(Gravity.END);
         slideTransition.setDuration(150);
         Slide exitleft=new Slide(Gravity.START);

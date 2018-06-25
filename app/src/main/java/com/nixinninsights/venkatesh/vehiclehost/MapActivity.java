@@ -20,6 +20,8 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -32,6 +34,8 @@ import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 
+import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.CardView;
 
 import android.text.TextUtils;
@@ -50,6 +54,7 @@ import android.view.MenuItem;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -94,6 +99,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 
+import com.google.gson.JsonArray;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.PermissionDeniedResponse;
@@ -105,6 +111,8 @@ import com.karumi.dexter.listener.single.PermissionListener;
 import com.nixinninsights.venkatesh.vehiclehost.InternetCheck.CheckInternet;
 
 import com.nixinninsights.venkatesh.vehiclehost.InternetCheck.InternetCheck;
+import com.nixinninsights.venkatesh.vehiclehost.Services.LocationMonitoringService;
+import com.nixinninsights.venkatesh.vehiclehost.SharedPreference.UserDetailsLogin;
 import com.nixinninsights.venkatesh.vehiclehost.Transisions.TransistionOfFragments;
 import com.nixinninsights.venkatesh.vehiclehost.Urls.UrlData;
 import com.nixinninsights.venkatesh.vehiclehost.Urls.VehicleHostKeys;
@@ -139,7 +147,7 @@ TransistionOfFragments transistionOfFragments=new TransistionOfFragments();
     //setting googel apiclient functions to map functions
     GoogleApiClient mGoogleApiClient;
     //Location for getting the current update locatioin in maps
-    Location mCurrentlocatioin;
+
     private FusedLocationProviderClient mFusedLocationClient;
     private SettingsClient mSettingsClient;
     private LocationRequest mLocationRequest;
@@ -149,9 +157,6 @@ TransistionOfFragments transistionOfFragments=new TransistionOfFragments();
     private String mLastUpdateTime;
     // location updates interval - 10sec
     private static final long UPDATE_INTERVAL_IN_MILLISECONDS = 20000;
-    // fastest updates interval - 5 sec
-    // location updates will be received if another app is requesting the locations
-    // than your app can handle
     private static final long FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS = 10000;
     private static final int REQUEST_CHECK_SETTINGS = 100;
     public Double intitlat, initlong;
@@ -186,8 +191,12 @@ TransistionOfFragments transistionOfFragments=new TransistionOfFragments();
 
     String internetfailure = "YOU ARE NOT CONNECTED TO INTERNET PLEAE CONEECT TO INTERNET";
 
+    //Toolbar objects
     Switch aSwitch;
-    EditText ROUTENO,FROMADDRESS,TOADDRESS,VEHICLEREGISTRATIONNO,DRIVERNAME;
+    CardView Routeinfo;
+    //
+
+
     public String Hostname="venkatesh",Hostvehicleno="Ap34FEG",BusRouteNo="127k",
             BusRouteFrom="kondapur",BusRouteTOAddress="Koti";
 //
@@ -199,6 +208,10 @@ TransistionOfFragments transistionOfFragments=new TransistionOfFragments();
     public  int counting =1;
     private ArrayList<Hoster> personList;
     View hostVehicleDetailsbottomsheet;
+    Button Checkservice;
+    private static final int REQUEST_PERMISSIONS_REQUEST_CODE = 34;
+    private boolean mAlreadyStartedService = false;
+    UserDetailsLogin Usersession;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -207,29 +220,32 @@ TransistionOfFragments transistionOfFragments=new TransistionOfFragments();
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("");
+
         aSwitch=toolbar.findViewById(R.id.Hostlocation);
+         Routeinfo=toolbar.findViewById(R.id.RouteInfo);
+         Checkservice=toolbar.findViewById(R.id.getLocation);
+         Usersession=new UserDetailsLogin(getApplicationContext());
+         if(Usersession.CheckLogin())
+             finish();
+
         dataforStorage=new DataforStorage(this);
 
 
         personList = new ArrayList<>();
          card=findViewById(R.id.Cardviewfordetails);
+
          LinearLayout llBottomSheet = (LinearLayout) findViewById(R.id.bottomsheet);
 
-     //   LinearLayout nestedScrollView=findViewById(R.id.Hostvehicldetails);
-        hostVehicleDetailsbottomsheet=findViewById(R.id.bottom_sheet2);
-        bottomSheetBehavior = BottomSheetBehavior.from(llBottomSheet);
-        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-        //bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
         placetext=findViewById(R.id.TextviewforPlace);
         directions=findViewById(R.id.directionText);
-        AssigningIdhostdetails();
+
+        requestPermissions();
         //if checking the playservice avilable in maps then initialiing the maps
         if (GoogleplayserviceAvilable()) {
             initMap();
         }
 
         Init();
-        // Construct a FusedLocationProviderClient.
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -280,82 +296,49 @@ TransistionOfFragments transistionOfFragments=new TransistionOfFragments();
                     }
             }
         });
+        Checkservice.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(
+                        new BroadcastReceiver() {
+                            @Override
+                            public void onReceive(Context context, Intent intent) {
+                                String latitude = intent.getStringExtra(LocationMonitoringService.EXTRA_LATITUDE);
+                                String longitude = intent.getStringExtra(LocationMonitoringService.EXTRA_LONGITUDE);
+
+                                if (latitude != null && longitude != null)
+                                {
+                                    Toast.makeText(getApplicationContext(),
+                                            "started locationserrvice"
+                                            + "\n Latitude : " + latitude +
+                                                    "\n Longitude: " + longitude,Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        }, new IntentFilter(LocationMonitoringService.ACTION_LOCATION_BROADCAST)
+                );
+            }
+        });
     }
 
-    public void AssigningIdhostdetails()
-    {
-        ROUTENO=findViewById(R.id.RouteNo);
-        FROMADDRESS=findViewById(R.id.FromPlace);
-        TOADDRESS=findViewById(R.id.Toplace);
-        VEHICLEREGISTRATIONNO=findViewById(R.id.RegistrationNo);
-        DRIVERNAME=findViewById(R.id.drivername);
-    }
     public void ChecckDataaddornotinHost()
     { Cursor result=dataforStorage.getdata();
         if(result.getCount()==0)
         {
             Toast.makeText(this, "Nodata", Toast.LENGTH_SHORT).show();
-            vehicledatadetailsbottomsheet();
+            aSwitch.setChecked(false);
+            transistionOfFragments.Modifiyingdetails(getFragmentManager());
         }
-
         else {
-
+            aSwitch.setChecked(true);
             while (result.moveToNext())
             {
-                ROUTENO.setText(result.getString(1));
-                FROMADDRESS.setText(result.getString(2));
-                TOADDRESS.setText(result.getString(3));
-                VEHICLEREGISTRATIONNO.setText(result.getString(4));
-                DRIVERNAME.setText(result.getString(5));
-
                 BusRouteNo=result.getString(1);
                 BusRouteFrom=result.getString(2);
                 BusRouteTOAddress=result.getString(3);
                 Hostvehicleno=result.getString(4);
                 Hostname=result.getString(5);
-
-
             }
-            vehicledatadetailsbottomsheet();
             UploadHostdata();
-        }
-    }
-    public void vehicledatadetailsbottomsheet()
-    {
-
-        if(hostVehicleDetailsbottomsheet.getVisibility()==View.VISIBLE)
-        {
-            Animation uptodown=AnimationUtils.loadAnimation(getApplicationContext(),R.anim.uptodown);
-            hostVehicleDetailsbottomsheet.startAnimation(uptodown);
-            hostVehicleDetailsbottomsheet.setVisibility(View.GONE);
-        }
-        else {
-            Animation animation=AnimationUtils.loadAnimation(getApplicationContext(),R.anim.downtoup);
-            hostVehicleDetailsbottomsheet.setVisibility(View.VISIBLE);
-            hostVehicleDetailsbottomsheet.startAnimation(animation);
-        }
-    }
-    public void SaveHostdetails(View view)
-    {
-        FormsValidations formsValidations=new FormsValidations();
-        if(formsValidations.ValidateHostdetails(ROUTENO,FROMADDRESS,TOADDRESS,VEHICLEREGISTRATIONNO,DRIVERNAME)) {
-            Animation uptodown = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.uptodown);
-            hostVehicleDetailsbottomsheet.startAnimation(uptodown);
-            hostVehicleDetailsbottomsheet.setVisibility(View.GONE);
-            Cursor data = dataforStorage.getdata();
-            if (data.getCount() == 0) {
-                boolean result = dataforStorage.Insertdata(ROUTENO.getText().toString(), FROMADDRESS.getText().toString(),
-                        TOADDRESS.getText().toString(), VEHICLEREGISTRATIONNO.getText().toString(), DRIVERNAME.getText().toString());
-                if (result) {
-                    Toast.makeText(this, "dataInsertedSuccessfully", Toast.LENGTH_SHORT).show();
-                }
-            } else {
-                boolean result = dataforStorage.Insertdata(ROUTENO.getText().toString(), FROMADDRESS.getText().toString(),
-                        TOADDRESS.getText().toString(), VEHICLEREGISTRATIONNO.getText().toString(), DRIVERNAME.getText().toString());
-                if (result) {
-                    //  Toast.makeText(this, "dataInsertedSuccessfully", Toast.LENGTH_SHORT).show();
-                }
-            }
         }
     }
 
@@ -403,12 +386,10 @@ TransistionOfFragments transistionOfFragments=new TransistionOfFragments();
                 // location is received
                 mCurrentLocation = locationResult.getLastLocation();
                 mLastUpdateTime = DateFormat.getTimeInstance().format(new Date());
-
-
                 updateLocationUI();
             }
         };
-//        Toast.makeText(this, ""+mCurrentLocation.getLongitude(), Toast.LENGTH_SHORT).show();
+
 
         mRequestingLocationUpdates = false;
 
@@ -503,11 +484,6 @@ TransistionOfFragments transistionOfFragments=new TransistionOfFragments();
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
-        } else if(hostVehicleDetailsbottomsheet.getVisibility()==View.VISIBLE){
-            Animation uptodown=AnimationUtils.loadAnimation(getApplicationContext(),R.anim.uptodown);
-            hostVehicleDetailsbottomsheet.startAnimation(uptodown);
-            hostVehicleDetailsbottomsheet.setVisibility(View.GONE);
-
         }
         else
         {
@@ -571,14 +547,14 @@ TransistionOfFragments transistionOfFragments=new TransistionOfFragments();
 
     @Override
     public void onLocationChanged(Location location) {
-       // mCurrentlocatioin = location;
-        if (mCurrentLocation == null) {
+       //mCurrentlocatioin = location;
+        if (location == null) {
             Toast.makeText(this, "could not get currnet location", Toast.LENGTH_SHORT).show();
         } else {
 
-            LatLng latlong = new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
-            intitlat = mCurrentLocation.getLatitude();
-            initlong = mCurrentLocation.getLongitude();
+            LatLng latlong = new LatLng(location.getLatitude(), location.getLongitude());
+            intitlat = location.getLatitude();
+            initlong = location.getLongitude();
             //updating the camera very near to the earh
             if (mGoogleApiClient != null) {
                 // locationManager.removeUpdates(this);
@@ -607,29 +583,6 @@ TransistionOfFragments transistionOfFragments=new TransistionOfFragments();
             Toast.makeText(context, "Gps Not Enabled", Toast.LENGTH_SHORT).show();
             Intent myIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
                             context.startActivity(myIntent);
-            // notify user
-//            AlertDialog.Builder dialog = new AlertDialog.Builder(context);
-//            dialog.setMessage(context.getResources().getString(R.string.GPS_IS_Not_Enabled));
-//            dialog.setPositiveButton(context.getResources().getString(R.string.open_location_settings), new DialogInterface.OnClickListener() {
-//                @Override
-//                public void onClick(DialogInterface paramDialogInterface, int paramInt) {
-//                    // TODO Auto-generated method stub
-//                    Intent myIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-//                    context.startActivity(myIntent);
-//                    //get gps
-//                }
-//            });
-//            dialog.setNegativeButton(context.getString(R.string.Cancel), new DialogInterface.OnClickListener() {
-//
-//                @Override
-//                public void onClick(DialogInterface paramDialogInterface, int paramInt) {
-//
-//                }
-//            });
-//            dialog.show();
-
-
-
         }
 
     }
@@ -746,6 +699,7 @@ TransistionOfFragments transistionOfFragments=new TransistionOfFragments();
         String hostname;
         String lattitude;
         String longitude;
+        String Hostpersonname;
 
 
         try {
@@ -773,11 +727,9 @@ TransistionOfFragments transistionOfFragments=new TransistionOfFragments();
                     hostname = HostedVehicles.getString(VehicleHostKeys.KEY_NAME);
                     lattitude = HostedVehicles.getString(VehicleHostKeys.KEY_LATTITUDE);
                     longitude = HostedVehicles.getString(VehicleHostKeys.KEY_LONGITUDE);
-                    Hoster s = new Hoster(hostname, lattitude, longitude);
-
+                    Hostpersonname=HostedVehicles.getString(VehicleHostKeys.KEY_HostPerson);
+                    Hoster s = new Hoster(hostname, lattitude, longitude,Hostpersonname);
                     personList.add(s);
-
-
                 }
             } else {
                 personList.clear();
@@ -787,7 +739,8 @@ TransistionOfFragments transistionOfFragments=new TransistionOfFragments();
                     hostname = HostedVehicles.getString(VehicleHostKeys.KEY_NAME);
                     lattitude = HostedVehicles.getString(VehicleHostKeys.KEY_LATTITUDE);
                     longitude = HostedVehicles.getString(VehicleHostKeys.KEY_LONGITUDE);
-                    Hoster s = new Hoster(hostname, lattitude, longitude);
+                    Hostpersonname=HostedVehicles.getString(VehicleHostKeys.KEY_HostPerson);
+                    Hoster s = new Hoster(hostname, lattitude, longitude,Hostpersonname);
                     personList.add(s);
                 }
             }
@@ -796,11 +749,11 @@ TransistionOfFragments transistionOfFragments=new TransistionOfFragments();
         }
         // Toast.makeText(MainActivity.this,response,Toast).show();
       placingthemarker();
-
-
     }
+
     private void placingthemarker() {
-        String name;
+        String Routename;
+        String HostpersonName;
         String lat;
         String lng;
         //  String markers = "true";
@@ -809,45 +762,52 @@ TransistionOfFragments transistionOfFragments=new TransistionOfFragments();
         mGoogleMap.clear();
         while (itr.hasNext()) {
             Hoster hst = itr.next();
-            name = hst.Hostname;
+            Routename = hst.Routename;
             lat = hst.lattitude;
             lng = hst.longitude;
-            setmarkers(name, Double.parseDouble(lat), Double.parseDouble(lng), siz);
+            HostpersonName=hst.Hostpersonname;
+            setmarkers(Routename, Double.parseDouble(lat), Double.parseDouble(lng), siz,HostpersonName);
             // drawMarker(new LatLng(Double.parseDouble(lat), Double.parseDouble(lng)), name);
 
             // mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(Double.parseDouble(lat), Double.parseDouble(lng))));
 
         }
+
+        mGoogleMap.animateCamera(CameraUpdateFactory.zoomTo(18));
         //  Toast.makeText(this,"values are"+name,Toast.LENGTH_LONG).show();
     }
 
 
-    private void setmarkers(String locality, double lat, double lon, int size) {
+    private void setmarkers(String Routename, double lat, double lon, int size,String Hostpersonname) {
 
         LatLng ll = new LatLng(lat, lon);
-        String info = getAddress(ll);
 
+        MarkerOptions options = new MarkerOptions().title(Routename)
+                .draggable(false)
+                .icon(BitmapDescriptorFactory.fromResource(R.drawable.bus))
+                .position(new LatLng(lat, lon))
+                .snippet(Hostpersonname);
 
-        MarkerOptions options = new MarkerOptions().title(locality)
-                .draggable(true)
-                .icon(BitmapDescriptorFactory.fromResource(R.drawable.busmarkeer))
-                .position(new LatLng(lat, lon));
-                //.snippet(info);
         NearVehicleMarker = mGoogleMap.addMarker(options);
-
         NearVehicleMarker.showInfoWindow();
         mGoogleMap.moveCamera(CameraUpdateFactory.newLatLng(ll));
-        mGoogleMap.animateCamera(CameraUpdateFactory.zoomTo(20));
     }
+
+    public void RouteinformationDetails(View view) {
+        transistionOfFragments.Modifiyingdetails(getFragmentManager());
+
+    }
+
     private class Hoster {
-        String Hostname;
+        String Routename;
         String lattitude;
         String longitude;
-
-        Hoster(String Hostname, String lattitude, String longitude) {
-            this.Hostname = Hostname;
+        String Hostpersonname;
+        Hoster(String Routename, String lattitude, String longitude,String Hostpersoname) {
+            this.Routename = Routename;
             this.lattitude = lattitude;
             this.longitude = longitude;
+            this.Hostpersonname=Hostpersoname;
         }
     }
 
@@ -966,59 +926,39 @@ TransistionOfFragments transistionOfFragments=new TransistionOfFragments();
 
                     }
                 });
+                mGoogleMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
+                    @Override
+                    public View getInfoWindow(Marker marker) {
+                        return null;
+                    }
+
+                    @Override
+                    public View getInfoContents(Marker marker) {
+                        View v = getLayoutInflater().inflate(R.layout.hostmarkerinfo, null);
+                        TextView TVROute = (TextView) v.findViewById(R.id.Routetitle);
+                        TextView Hostperson = (TextView) v.findViewById(R.id.Hostperson);
+                        TVROute.setText(marker.getTitle());
+                        Hostperson.setText(marker.getSnippet());
+                        return v;
+                    }
+                });
                 mGoogleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
                     @Override
                     public boolean onMarkerClick(Marker marker) {
                     //passingthe hostperson name to vehicle fragment to getiing information for vehicle.
-                        transistionOfFragments.MovingNewfragment("venkatesh",getFragmentManager());
+                        transistionOfFragments.MovingNewfragment(marker.getSnippet(),getFragmentManager());
 
-                       // Toast.makeText(MapActivity.this, marker.getTitle(), Toast.LENGTH_SHORT).show();
+                     //  Toast.makeText(MapActivity.this, marker.getSnippet(), Toast.LENGTH_SHORT).show();
                         return false;
                     }
                 });
+
                 mGoogleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
                     @Override
                     public void onMapClick(LatLng latLng) {
                         card.setVisibility(View.GONE);
                        // directionMarker.clear();
                        mGoogleMap.clear();
-//                        if (directionMarker.size() > 0) {
-//                            directionMarker.clear();
-//                            mGoogleMap.clear();
-//                        }
-//
-//                        // Adding new item to the ArrayList
-//                        directionMarker.add(latLng);
-//                        // Creating MarkerOptions
-//                        MarkerOptions options = new MarkerOptions();
-//                        // Setting the position of the marker
-//                        options.position(latLng);
-//                        if (directionMarker.size() == 1)
-//                        {
-//                            options.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
-//                        }
-////                        else if (directionMarker.size() == 2) {
-////                            options.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
-////                        }
-////                        // Add new marker to the Google Map Android API V2
-//                        mGoogleMap.addMarker(options);
-//                        // Checks, whether start and end locations are captured
-//                        if (directionMarker.size() >= 2) {
-//                            LatLng origin = (LatLng) directionMarker.get(0);
-//                            LatLng dest = (LatLng) directionMarker.get(1);
-//
-//                            // Getting URL to the Google Directions API
-//                            String url = getDirectionsUrl(origin, dest);
-//                            DownloadTask downloadTask = new DownloadTask();
-//                            // Start downloading json data from Google Directions API
-//                            downloadTask.execute(url); }
-//                        LatLng latlongg=options.getPosition();
-//                        String ss=getAddress(latlongg);
-//
-//                        directionlattitude=latLng.latitude;
-//                        directionlongitude=latLng.longitude;
-//                        placetext.setText(ss);
-//                        card.setVisibility(View.GONE);
                     }
 
                 });
@@ -1064,11 +1004,149 @@ TransistionOfFragments transistionOfFragments=new TransistionOfFragments();
         if (mRequestingLocationUpdates && checkPermissions()) {
             startLocationUpdates();
         }
+        else
+        {
+            requestPermissions();
+        }
+        startStep1();
+
     }
+    private void startStep1() {
+
+        //Check whether this user has installed Google play service which is being used by Location updates.
+        if (GoogleplayserviceAvilable()) {
+
+            //Passing null to indicate that it is executing for the first time.
+            startStep2(null);
+        }
+        else {
+            Toast.makeText(getApplicationContext(),
+                    R.string.no_google_playservice_available, Toast.LENGTH_LONG).show();
+        }
+    }
+    private Boolean startStep2(DialogInterface dialog) {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+
+        if (activeNetworkInfo == null || !activeNetworkInfo.isConnected()) {
+            promptInternetConnect();
+            return false;
+        }
+
+
+        if (dialog != null) {
+            dialog.dismiss();
+        }
+
+        //Yes there is active internet connection. Next check Location is granted by user or not.
+
+        if (checkPermissions()) { //Yes permissions are granted by the user. Go to the next step.
+            startStep3();
+        } else {  //No user has not granted the permissions yet. Request now.
+            requestPermissions();
+        }
+        return true;
+    }
+    private void promptInternetConnect() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(MapActivity.this);
+        builder.setTitle(R.string.title_alert_no_intenet);
+        builder.setMessage(R.string.msg_alert_no_internet);
+        String positiveText = getString(R.string.btn_label_refresh);
+        builder.setPositiveButton(positiveText,
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        //Block the Application Execution until user grants the permissions
+                        if (startStep2(dialog)) {
+                            //Now make sure about location permission.
+                            if (checkPermissions()) {
+                                //Step 2: Start the Location Monitor Service
+                                //Everything is there to start the service.
+                                startStep3();
+                            } else if (!checkPermissions()) {
+                                requestPermissions();
+                            }
+                        }
+                    }
+                });
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+    private void requestPermissions() {
+
+        boolean shouldProvideRationale =
+                ActivityCompat.shouldShowRequestPermissionRationale(this,
+                        android.Manifest.permission.ACCESS_FINE_LOCATION);
+
+        boolean shouldProvideRationale2 =
+                ActivityCompat.shouldShowRequestPermissionRationale(this,
+                        Manifest.permission.ACCESS_COARSE_LOCATION);
+
+
+        // Provide an additional rationale to the img_user. This would happen if the img_user denied the
+        // request previously, but didn't check the "Don't ask again" checkbox.
+        if (shouldProvideRationale || shouldProvideRationale2) {
+            Log.i(TAG, "Displaying permission rationale to provide additional context.");
+            showSnackbar(R.string.permission_rationale,
+                    android.R.string.ok, new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            // Request permission
+                            ActivityCompat.requestPermissions(MapActivity.this,
+                                    new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION},
+                                    REQUEST_PERMISSIONS_REQUEST_CODE);
+                        }
+                    });
+        } else {
+            Log.i(TAG, "Requesting permission");
+            // Request permission. It's possible this can be auto answered if device policy
+            // sets the permission in a given state or the img_user denied the permission
+            // previously and checked "Never ask again".
+            ActivityCompat.requestPermissions(MapActivity.this,
+                    new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION},
+                    REQUEST_PERMISSIONS_REQUEST_CODE);
+        }
+    }
+    private void startStep3() {
+
+        //And it will be keep running until you close the entire application from task manager.
+        //This method will executed only once.
+
+        if (!mAlreadyStartedService ) {
+
+
+            //Start location sharing service to app server.........
+            Intent intent = new Intent(this, LocationMonitoringService.class);
+            startService(intent);
+
+            mAlreadyStartedService = true;
+            //Ends................................................
+        }
+    }
+    private void showSnackbar(final int mainTextStringId, final int actionStringId,
+                              View.OnClickListener listener) {
+        Snackbar.make(
+                findViewById(android.R.id.content),
+                getString(mainTextStringId),
+                Snackbar.LENGTH_INDEFINITE)
+                .setAction(getString(actionStringId), listener).show();
+    }
+
+
+
     private boolean checkPermissions() {
-        int permissionState = ActivityCompat.checkSelfPermission(this,
-                Manifest.permission.ACCESS_FINE_LOCATION);
-        return permissionState == PackageManager.PERMISSION_GRANTED;
+
+        int permissionState1 = ActivityCompat.checkSelfPermission(this,
+                android.Manifest.permission.ACCESS_FINE_LOCATION);
+
+        int permissionState2 = ActivityCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_COARSE_LOCATION);
+
+        return permissionState1 == PackageManager.PERMISSION_GRANTED
+                && permissionState2 == PackageManager.PERMISSION_GRANTED;
+
     }
     public boolean GoogleplayserviceAvilable()
     {
@@ -1159,7 +1237,6 @@ TransistionOfFragments transistionOfFragments=new TransistionOfFragments();
         Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
                 Uri.parse("http://maps.google.com/maps?daddr="+directionlattitude+","+directionlongitude));
         startActivity(intent);
-
     }
 //clicking the button updating the location updates
     public void StartLocationUpdatesStartActivity() {
@@ -1171,7 +1248,6 @@ TransistionOfFragments transistionOfFragments=new TransistionOfFragments();
                         mRequestingLocationUpdates = true;
                         startLocationUpdates();
                     }
-
                     @Override
                     public void onPermissionDenied(PermissionDeniedResponse response) {
                         if (response.isPermanentlyDenied()) {

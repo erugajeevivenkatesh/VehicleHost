@@ -29,11 +29,11 @@ public class RegisterUserData extends AppCompatActivity {
         enterSlide.setInterpolator(new DecelerateInterpolator(2));
         getWindow().setEnterTransition(enterSlide);
 
+
         Slide returnSlide = new Slide(END);
         returnSlide.setDuration(700);
         returnSlide.addTarget(R.id.OTPpassLayout);
         returnSlide.setInterpolator(new DecelerateInterpolator());
         getWindow().setReturnTransition(returnSlide);
-
     }
 }

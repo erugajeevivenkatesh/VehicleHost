@@ -46,6 +46,7 @@
     <item name="android:textColor">@color/colorAccent</item>
 
 </style>
+
     <style name="AppTheme.CardViewStyle">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_marginStart">10dp</item>
@@ -53,6 +54,29 @@
         <item name="android:layout_marginBottom">5dp</item>
         <item name="android:layout_height">wrap_content</item>
 
+
+    </style>
+
+    <style name="AppTheme.Editroutedetails">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:imeOptions">actionNext</item>
+        <item name="android:fontFamily">@font/convergence</item>
+        <item name="android:layout_height">wrap_content</item>
+
+    </style>
+
+
+    <style name="AppTheme.Lineaarlayoutstyle">
+
+        <item name="android:layout_width">match_parent</item>
+
+        <item name="android:layout_height">100dp</item>
+    </style>
+    <style name="AppTheme.ButtonStyle">
+        <item name="android:background">@drawable/linearlayoutstyleinrouteinfo</item>
+        <item name="android:layout_margin">5dp</item>
+        <item name="android:textStyle">bold</item>
 
     </style>
 

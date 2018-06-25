@@ -36,6 +36,39 @@
             android:background="@android:color/transparent"
             android:theme="?attr/actionBarTheme">
 
+            <Button
+                android:layout_width="wrap_content"
+                android:id="@+id/getLocation"
+                android:text="checkservice"
+                android:layout_height="wrap_content" />
+            <android.support.v7.widget.CardView
+                android:layout_width="wrap_content"
+                android:layout_gravity="end"
+                android:id="@+id/RouteInfo"
+                android:onClick="RouteinformationDetails"
+                app:cardCornerRadius="5dp"
+                android:layout_marginEnd="5dp"
+                android:layout_height="wrap_content">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:background="@drawable/side_nav_bar"
+                    android:orientation="horizontal">
+                    <ImageView
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:src="@drawable/directionsinmaps"
+                        android:layout_height="wrap_content" />
+                    <ImageView
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:src="@drawable/information"
+                        android:layout_height="wrap_content" />
+
+                </LinearLayout>
+
+            </android.support.v7.widget.CardView>
+
             <Switch
                 android:id="@+id/Hostlocation"
                 android:layout_width="wrap_content"
@@ -49,6 +82,7 @@
                 android:textColor="@color/colorPrimaryDark"
                 android:textSize="14dp"
                 android:textStyle="bold" />
+
         </android.support.v7.widget.Toolbar>
 
     </android.support.v7.widget.CardView>

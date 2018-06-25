@@ -11,8 +11,12 @@ import static android.webkit.ConsoleMessage.MessageLevel.LOG;
 
 public class DataforStorage extends SQLiteOpenHelper {
      static final String Tablename="Vehiclehostdetails";
+     static final String Usertabel="Userdetails";
+
 
     String Hosdetailsquery="create table "+Tablename + "(ID INTEGER PRIMARY KEY AUTOINCREMENT,ROUTENO" +
+            " TEXT,FROMADDRESS TEXT,TOADDRESS TEXT,VEHICLEREGITRAATIONNO TEXT,DRIVERNAME TEXT)";
+    String signintableQuery="create table "+Tablename + "(ID INTEGER PRIMARY KEY AUTOINCREMENT,ROUTENO" +
             " TEXT,FROMADDRESS TEXT,TOADDRESS TEXT,VEHICLEREGITRAATIONNO TEXT,DRIVERNAME TEXT)";
 
     public DataforStorage(Context context)
@@ -67,11 +71,11 @@ public class DataforStorage extends SQLiteOpenHelper {
     {   String id="1";
         SQLiteDatabase db=this.getWritableDatabase();
         ContentValues contentValues=new ContentValues();
-        contentValues.put("ROUTENO",ROUTENO);
-        contentValues.put("FROMADDRESS",FromAddress);
-        contentValues.put("TOADDRESS",ToAddress);
-        contentValues.put("VEHICLEREGITRAATIONNO",VehicleRegistrationNo);
-        contentValues.put("DRIVERNAME",DriverNo);
+        contentValues.put("ROUTENO",ROUTENO.toUpperCase());
+        contentValues.put("FROMADDRESS",FromAddress.toUpperCase());
+        contentValues.put("TOADDRESS",ToAddress.toUpperCase());
+        contentValues.put("VEHICLEREGITRAATIONNO",VehicleRegistrationNo.toUpperCase());
+        contentValues.put("DRIVERNAME",DriverNo.toUpperCase());
         db.update(Tablename,contentValues,"ID=?",new String[]{id});
         return true;
     }
